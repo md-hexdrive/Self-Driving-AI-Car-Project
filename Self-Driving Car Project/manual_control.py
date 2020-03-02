@@ -1,8 +1,11 @@
+import sys
+from threading import Thread
 import pygame
 from time import sleep
 from pygame.locals import *
 
 from driving import *
+#import record_driving
 
 pygame.init()
 screen = pygame.display.set_mode((640,480))
@@ -12,47 +15,65 @@ pygame.mouse.set_visible(0)
 pygame.key.set_repeat(0,0)
 pygame.display.update()
 
-try:
+
+
+def manual_control():
     stopDriving(True)
 
     while True:
-        #print("doing a function")
         for event in pygame.event.get():
-            if ((event.type == KEYDOWN) or (event.type == KEYUP)):
-                if ((event.type == KEYDOWN) or (event.type == KEYUP)) and event.key == K_SPACE:
+            if (event.type == KEYDOWN):
+                if event.key == K_LEFT:
+                    print("left key")
+                    turnLeft()
+                    
+                if event.key == K_RIGHT:
+                    print("right key")
+                    turnRight()
+                    
+                if event.key == K_UP:
+                    print("up key")
+                    driveForward()
+                    
+                if event.key == K_DOWN:
+                    print("down key")
+                    driveBackward()
+                    
+                if event.key == K_SPACE:
                     print("space key")
                     stopDriving()
+                    #record_driving.running = False
+                    pygame.quit()
+                    sys.exit()
+                    
+            
+            elif (event.type == KEYUP):
+                if event.key == K_LEFT:
+                    print("left key released")
+                    turnStraight()
+                    
+                if event.key == K_RIGHT:
+                    print("right key released")
+                    turnStraight()
+                    
+                if event.key == K_UP:
+                    print("up key released")
+                    stopDriving()
+                    
+                if event.key == K_DOWN:
+                    print("down key released")
+                    stopDriving()
                 
-                elif (event.type == KEYDOWN) and event.key == K_UP:
-                        print("up arrow")
-                        driveForward()
-                elif (event.type == KEYUP) and event.key == K_UP:
-                        stopDriving()
-                        print("up arrow release")
-                        
-                elif (event.type == KEYDOWN) and event.key == K_DOWN:
-                        print("down arrow")
-                        driveBackward()
-                elif (event.type == KEYUP) and event.key == K_DOWN:
-                        stopDriving()
-                        print("down arrow release")
-                        
-                elif (event.type == KEYDOWN) and event.key == K_LEFT:
-                        print("left arrow")
-                        turnLeft()
-                elif (event.type == KEYUP) and event.key == K_LEFT:
-                        straightenWheels()
-                        print("left arrow release")
-                        
-                elif (event.type == KEYDOWN) and event.key == K_RIGHT:
-                        print("right arrow")
-                        turnRight()
-                elif (event.type == KEYUP) and event.key == K_RIGHT:
-                        straightenWheels()
-                        print("left arrow release")
-                
-                
-                
+                if event.key == K_SPACE:
+                    print("space key released")
+                    stopDriving()
+                    #record_driving.running = False
+                    pygame.quit()
+                    sys.exit()
 
-finally:
-    stopDriving(True)
+#recorder = record_driving.RecordDriving(0)
+#recordingThread = Thread(target = recorder.start_recording)
+controlThread = Thread(target = manual_control)
+
+#recordingThread.run()
+controlThread.run()
