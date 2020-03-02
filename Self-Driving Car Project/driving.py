@@ -39,7 +39,7 @@ def driveForward(straightWheels = False):
     forward.value = True
     backward.value = False
     
-    drive.value = 1
+    drive.value = .8
     
     if straightWheels:
         straightenWheels()
@@ -48,7 +48,7 @@ def driveBackward():
     forward.value = False
     backward.value = True
     
-    drive.value = 1
+    drive.value = .8
 
 def straightenWheels():
     left.value = False
@@ -91,25 +91,44 @@ def isTurnedLeft():
     return bool(left.value and not right.value)
 def isTurnedRight():
     return bool(not left.value and right.value)
-if __name__ == '__main__':
-    driveForward()
+
+def setSteeringPos(pos):
     
-    print("Going Forward: " + str(isDrivingForwards()))
-    print("Going Backwards: " + str(isBackingUp()))
-    print("Stopped: " + str(isStopped()))
-    print('\n\n')
-    turnLeft()
-    print("Turned Straight: " + str(isTurnedStraight()))
-    print("Turned Left: " + str(isTurnedLeft()))
-    print("Turned Right: " + str(isTurnedRight()))
-    print('\n\n')
-    #sleep(5)
-    turnStraight()
-    print("Turned Straight: " + str(isTurnedStraight()))
-    print("Turned Left: " + str(isTurnedLeft()))
-    print("Turned Right: " + str(isTurnedRight()))
-    print('\n\n')
-    stopDriving()
-    print("Going Forward: " + str(isDrivingForwards()))
-    print("Going Backwards: " + str(isBackingUp()))
-    print("Stopped: " + str(isStopped()))
+    if pos == 0:
+        turnLeft()
+    elif pos == 1:
+        turnStraight()
+    elif pos == 2:
+        turnRight()
+    else:
+        print("ERROR - incorrect steering position")
+
+def getSteeringPos():
+    pos = turn.value
+    if isTurnedLeft():
+        pos *= -1
+    return pos + 1
+
+def setDrivingSpeed(speed):
+    if abs(speed) > 1:
+        print('Error, incorrect value for driving speed')
+        return
+    if speed > 0: # go forwards
+        forward.value = True
+        backward.value = False
+    elif speed < 0: # go backwards
+        forward.value = False
+        backward.value = True
+    elif speed == 0: # stopped
+        forward.value = False
+        backward.value = False
+    drive.value = abs(speed)
+
+def getDrivingSpeed():
+    speed = drive.value
+    if isBackingUp():
+        speed *= -1
+    return speed + 1
+if __name__ == '__main__':
+    setDrivingSpeed(-.8)
+    print(getDrivingSpeed())
