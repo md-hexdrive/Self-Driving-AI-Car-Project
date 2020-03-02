@@ -84,7 +84,7 @@ def blur(image):
 
 def random_flip(image, steering_pos):
     flip_it = random.randint(0, 1)
-    if flip_it == 1:
+    if flip_it == 1 and steering_pos != stop_pos:
         image = cv2.flip(image,1)
         steering_pos = 2 - steering_pos # steering positions are 0, 1, and 2, so subtracting the position by two will flip its value
     
@@ -176,7 +176,30 @@ def nvidia_model():
     model.compile(loss='mse', optimizer='adam')
     
     return model
-        
+
+def train_model():
+    model_output_dir = '/content/gdrive/My Drive/Colab Notebooks/LaneNavigation'
+    if not os.path.exists(model_output_dir):
+        os.makedirs(model_output_dir)
+
+    # save the model weights after each epoch if the validation loss decreased
+    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+        filepath=os.path.join(model_output_dir, 'lane_navigation_checkpoint.h5'))
+    
+    history = model.fit_generator(image_data_generator(x_train, y_train, batch_size=200, is_training=True),
+                                  steps_per_epoch=300,
+                                  epochs=10,
+                                  validation_data=image_data_generator(x_test, y_test, batch_size=100,
+                                                                       is_training=False),
+                                  validations_steps=200,
+                                  verbose=1,
+                                  shuffle=1,
+                                  callbacks=[checkpoint_callback])
+    
+    # always save model output as soon as model finishes training
+    model.save(os.path.join(model_output_dir, 'lane_navigation_final.h5'))
+    
+    
 """
 ##################################################################################
 
@@ -198,7 +221,7 @@ def check_data():
 
 def get_steering_angle_distribution():
     # look at steering angle distribution
-    num_of_bins = 3
+    num_of_bins = 4
     samples_per_bin = 400
     hist, bins = np.histogram(df['Angle'], num_of_bins)
 
@@ -250,6 +273,9 @@ def test_image_data_generator():
         axes[i][1].set_title("Validation, angle=%s" % y_test_batch[i])
 
 logging.basicConfig(level = logging.ERROR)
+
+stop_pos = 3
+
 
 image_paths = []
 steering_angles = []
