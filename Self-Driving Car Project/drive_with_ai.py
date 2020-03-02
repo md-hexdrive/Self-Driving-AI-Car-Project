@@ -1,9 +1,13 @@
 """
 Here we are, finally!
 Driving the car using only a neural network.
+
+Some of this code was adapted from the DeepPiCar tutorial, specifically, end_to_end_lane_follower.py
+
 """
 import driving
 import train_model
+import distance_monitoring
 
 import tensorflow as tf
 import tensorflow.keras as keras
@@ -13,12 +17,12 @@ import cv2
 import os
 import os.path
 import logging
-
+import sys
 logging.basicConfig(level=logging.ERROR)
 
 model_path = '/home/pi/Desktop/models/nvidia_model.h5'
 
-# ;-) -> "Run Flash, Run" -> "Drive AI, Drive", I'm a bit of a fan of "The Flash"
+# ;-) -> "Run Flash, Run" == "Drive AI, Drive"; I'm a bit of a fan of "The Flash"
 def drive_ai_drive(model_path=model_path):
     halt = False
     
@@ -50,7 +54,14 @@ def drive_ai_drive(model_path=model_path):
             else:
                 driving.setSteeringPos(driving_command)
                 
-                driving.driveForward()
+                if distance_montoring.ultrasonic_sensor.distance < .45:
+                    print("stopped")
+                else:
+                    driving.driveForward()
         
         else:
             driving.stopDriving()
+    cap.release()
+    cv2.destroyAllWindows()
+
+drive_ai_drive()
