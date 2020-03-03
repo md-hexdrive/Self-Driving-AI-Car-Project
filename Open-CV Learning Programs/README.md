@@ -1,1 +1,1 @@
-These are programs that I used to test interacting with the Raspberry Pi.
+These are programs that I created when following tutorials to learn the basics of OpenCV.
