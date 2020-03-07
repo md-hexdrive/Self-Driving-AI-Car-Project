@@ -147,7 +147,7 @@ def image_data_generator(image_paths, steering_angles, batch_size, is_training):
 ##################################################################################
 Neural network models
 
-DO NOT USE THE NIVIDIA MODEL ON THE RASPBERRY PI
+DO NOT RUN THE NIVIDIA MODEL'S TRAINING ON THE RASPBERRY PI, IT WILL STALL IT UP!
 
 """
 def nvidia_model():
@@ -199,6 +199,8 @@ def train_model():
     # always save model output as soon as model finishes training
     model.save(os.path.join(model_output_dir, 'lane_navigation_final.h5'))
     
+    get_training_results(history)
+
     
 """
 ##################################################################################
@@ -220,6 +222,10 @@ def check_data():
 
 
 def get_steering_angle_distribution():
+    df = pd.DataFrame()
+    df['ImagePath'] = image_paths
+    df['Angle'] = steering_angles
+
     # look at steering angle distribution
     num_of_bins = 4
     samples_per_bin = 400
@@ -272,23 +278,41 @@ def test_image_data_generator():
         axes[i][1].imshow(x_test_batch[i])
         axes[i][1].set_title("Validation, angle=%s" % y_test_batch[i])
 
-logging.basicConfig(level = logging.ERROR)
+def get_training_results(history):
+    date_str = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    history_path = os.path.join(model_output_dir, 'history.pickle')
+    
+    with open(history_path, 'wb') as f:
+        pickle.dump(history.history, f, pickle.HIGHEST_PROTOCOL)
+    
+    print(history.history)
+    
+    with open(history_path, 'rb') as f:
+        history = pickle.load(f)
+    
+    print(history)
+    plt.plot(history['loss'],color='blue')
+    plt.plot(history['val_loss'],color='red')
+    plt.legend(['training loss'],['validation loss'])
 
-stop_pos = 3
+if __name__=='__main__':
+    logging.basicConfig(level = logging.ERROR)
+
+    stop_pos = 3
 
 
-image_paths = []
-steering_angles = []
-image_index = 24
-specific_dir = "1582523922"
-recording_path = "/home/pi/Desktop/recordings/" + specific_dir
+    image_paths = []
+    steering_angles = []
+    image_index = 24
+    specific_dir = "Good_Pictures"
+    recording_path = "/home/pi/Desktop/recordings/" + specific_dir
 
-get_training_data(recording_path)
+    get_training_data(recording_path)
+    get_steering_angle_distribution()
+    (x_train, y_train), (x_valid, y_valid) = process_training_data()
 
-(x_train, y_train), (x_valid, y_valid) = process_training_data()
+    model = nvidia_model()
+    print(model.summary())
+    test_image_data_generator()
 
-model = nvidia_model()
-print(model.summary())
-test_image_data_generator()
-
-print("\n\nDONE")
+    print("\n\nDONE")
