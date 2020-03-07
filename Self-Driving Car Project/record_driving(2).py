@@ -4,6 +4,7 @@ import cv2
 import os
 import os.path
 import time
+import datetime
 from threading import Thread
 
 
@@ -16,8 +17,9 @@ Recorded data will be used to train the neural network later on.
 actions = ["lft", "rht", "mid", "fwd", "bck", "stp",]
 
 class RecordDriving():
-    # use the starting time in milliseconds by default to identify different recordings
-    def __init__(self, source = 0, save_dir = '/home/pi/Desktop/recordings/', recordingN = int(time.time())):
+    # use formatted datetime to identify different recordings (from DeepPiCar code)
+    def __init__(self, source = 0, save_dir = '/home/pi/Desktop/recordings/',
+                 recordingN = datetime.datetime.now().strftime("%y%m%d_%H%M%S")):
         self.source = source
         self.cap = cv2.VideoCapture(self.source)
         self.recording_number = recordingN
@@ -93,6 +95,8 @@ class RecordDriving():
         ret, frame = self.cap.read()
         cv2.imshow('frame', frame)
         self.out.write(frame)
+        
+        frame = cv2.resize(frame, (85,64))
         
         if key == ord(' '):
             cv2.imwrite('%simage_%03i_%s_%i.jpg' % (self.recording_directory, self.frameN,
