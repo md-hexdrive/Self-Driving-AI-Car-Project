@@ -101,7 +101,7 @@ def setSteeringPos(pos):
     elif pos == 2:
         turnRight()
     else:
-        print("ERROR - incorrect steering position")
+        print("ERROR - incorrect steering position %f" % pos)
 
 def getSteeringPos():
     pos = turn.value
@@ -130,5 +130,5 @@ def getDrivingSpeed():
         speed *= -1
     return speed + 1
 if __name__ == '__main__':
-    setDrivingSpeed(-.8)
-    print(getDrivingSpeed())
+    setSteeringPos(-.8)
+    print(getSteeringPos())
