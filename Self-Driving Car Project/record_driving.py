@@ -101,24 +101,3 @@ command_number = 0
 
 if __name__ == '__main__':
     run_recording_thread()
-
-
-
-        
-def addCommand(direction = " ", time = 0):
-    if direction.lower() in actions:
-        commands.append((direction, time))
-    else:
-        logging.debug("Error, you attempted to record an Illegal action")
-
-def getNthCommand():
-    command = commands[command_number]
-    command_number += 1
-    return command
-
-def returnCommandList():
-    return commands
-
-def playbackActions():
-    pass
-
