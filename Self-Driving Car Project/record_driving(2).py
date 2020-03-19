@@ -31,7 +31,7 @@ class RecordDriving():
 
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
         self.out = cv2.VideoWriter('%svideo_%s.avi' % (self.recording_directory, self.recording_number),
-                                   self.fourcc, 30.0, (640,480))
+                                   self.fourcc, 20.0, (640,480))
         
 
 
@@ -71,7 +71,7 @@ class RecordDriving():
             elif ord('r') == key:
                 print('restarting')
                 self.stop_recording()
-                run_recording_thread()
+                RecordDriving(0, recordingN = datetime.datetime.now().strftime("%y%m%d_%H%M%S")).start_recording()
             
             elif ord(' ') == key:
                 print('end of track')
