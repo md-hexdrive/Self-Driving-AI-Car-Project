@@ -26,7 +26,7 @@ def fullBrake():
     
     drive.value = 0
 
-def stopDriving(centerWheels = False):
+def stopDriving(centerWheels = True):
     forward.value = False
     backward.value = False
     
@@ -39,7 +39,7 @@ def driveForward(straightWheels = False):
     forward.value = True
     backward.value = False
     
-    drive.value = .8
+    drive.value = .5
     
     if straightWheels:
         straightenWheels()
