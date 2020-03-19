@@ -20,11 +20,15 @@ backward = DigitalOutputDevice(REVERSE_PIN)
 left = DigitalOutputDevice(LEFT_PIN)
 right = DigitalOutputDevice(RIGHT_PIN)
 
-def fullBrake():
+def fullBrake(centerWheels = False):
     forward.value = True
     backward.value = True
     
     drive.value = 0
+    
+    if(centerWheels):
+        straightenWheels()
+
 
 def stopDriving(centerWheels = True):
     forward.value = False
