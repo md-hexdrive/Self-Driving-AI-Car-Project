@@ -1,4 +1,5 @@
 import driving
+import interpret_frame
 import logging
 import cv2
 import os
@@ -16,145 +17,151 @@ Recorded data will be used to train the neural network later on.
 
 actions = ["lft", "rht", "mid", "fwd", "bck", "stp",]
 
+# returns the current time, used to uniquely identify recordings
+def now():
+    return datetime.datetime.now().strftime("%y%m_%d_%H%M%S")
+
 class RecordDriving():
     # use formatted datetime to identify different recordings (from DeepPiCar code)
-    def __init__(self, source = 0, save_dir = '/home/pi/Desktop/recordings/',
-                 recordingN = datetime.datetime.now().strftime("%y%m%d_%H%M%S")):
+    def __init__(self, source = 0, width = 640, height = 480, fps=10,
+                 save_dir = '/home/pi/Desktop/recordings/',
+                 recording_id = now(), is_training=True, view_interpretation = True,
+                 record_interpretation = False):
         self.source = source
+        print(self.source)
+        self.width = width
+        self.height = height
+        
         self.cap = cv2.VideoCapture(self.source)
-        self.recording_number = recordingN
-        self.recording_directory = save_dir + str(self.recording_number) + '/'
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+        
+        self.is_training = is_training
+        self.view_interpretation = view_interpretation
+        self.record_interpretation = record_interpretation
+        
+        self.recording_id = recording_id
+        
+        if is_training:
+            recording_type = "training"
+        else:
+            recording_type = "testing"
+        self.recording_directory = os.path.join(save_dir, recording_type, str(self.recording_id), '')
         
         if not os.path.exists(self.recording_directory):
             os.makedirs(self.recording_directory)
         self.frameN = 0
 
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.out = cv2.VideoWriter('%svideo_%s.avi' % (self.recording_directory, self.recording_number),
-                                   self.fourcc, 20.0, (640,480))
+        self.out = cv2.VideoWriter('%svideo_%s.avi' % (self.recording_directory, self.recording_id),
+                                   self.fourcc, fps, (self.width, self.height))
         
 
-
+    # starts the recording session
     def start_recording(self):
         self.record()
     
+    # the recording loop
     def record(self):
         while (self.cap.isOpened()):
+            self.capture_frame()
             
-            key = cv2.waitKey(2) & 0xFF
-                        
-            self.capture_frame(key)
-        
-            if key == ord('q'):
-                break
-            
-            elif ord('s') == key:
-                print('reverse')
-                driving.turnStraight()
-                driving.driveBackward()
-                
-            elif ord('w') == key:
-                print('str')
-                driving.turnStraight()
-                driving.driveForward()
-                
-            elif ord('a') == key: #in self.recent_keys:
-                print('lft')
-                driving.turnLeft()
-                driving.driveForward()
-                
-            elif ord('d') == key: #in self.recent_keys:
-                print('rht')
-                driving.turnRight()
-                driving.driveForward()
-            
-            elif ord('r') == key:
-                print('restarting')
-                self.stop_recording()
-                RecordDriving(0, recordingN = datetime.datetime.now().strftime("%y%m%d_%H%M%S")).start_recording()
-            
-            elif ord(' ') == key:
-                print('end of track')
-                driving.stopDriving()
-                driving.turnStraight()
-                
-            else:
-                print("stopped")
-                driving.stopDriving()
-                driving.turnStraight()
-            
-        self.stop_recording()
-        
+    # cleanup after running
     def stop_recording(self):
         self.out.release()
         self.cap.release()
         cv2.destroyAllWindows()
     
-    def capture_frame(self, key):
+    # record and display the current video frame, include driving status info in the frame's name
+    def capture_frame(self):
+
         self.frameN += 1
         ret, frame = self.cap.read()
-        cv2.imshow('frame', frame)
-        self.out.write(frame)
+
+        overlay = interpret_frame.whats_going_on(frame)
         
+        
+        if self.view_interpretation:
+            cv2.imshow('overlay', overlay)
+        else:
+            cv2.imshow('frame', frame)
+        
+        if self.record_interpretation:
+            self.out.write(overlay)
+        else:
+            self.out.write(frame)
+
         frame = cv2.resize(frame, (85,64))
+        
+        key = cv2.waitKey(1) & 0xFF
+        self.keyboard_interaction(key)
         
         if key == ord(' '):
             cv2.imwrite('%simage_%03i_%s_%i.jpg' % (self.recording_directory, self.frameN,
-                                        self.recording_number,
+                                        self.recording_id,
                                      3), frame) # the 3 is used to tell the car where to stop
 
         elif driving.isDrivingForwards():
             cv2.imwrite('%simage_%03i_%s_%i.jpg' % (self.recording_directory, self.frameN,
-                                                    self.recording_number,
+                                                    self.recording_id,
                                                  self.curSteeringPos()), frame)
-
+        return frame
     
+    # handle user-keyboard interaction in the running window
+    def keyboard_interaction(self, key):
+        if key == ord('q'):
+            self.stop_recording()
+        
+        elif ord('s') == key:
+            print('reverse')
+            driving.turnStraight()
+            driving.driveBackward()
+            
+        elif ord('w') == key:
+            print('str')
+            driving.turnStraight()
+            driving.driveForward()
+            
+        elif ord('a') == key: #in self.recent_keys:
+            print('lft')
+            driving.turnLeft()
+            driving.driveForward()
+            
+        elif ord('d') == key: #in self.recent_keys:
+            print('rht')
+            driving.turnRight()
+            driving.driveForward()
+        
+        elif ord('r') == key:
+            print('restarting')
+            self.stop_recording()
+            RecordDriving(0, recording_id = self.now()).start_recording()
+        
+        elif ord(' ') == key:
+            print('end of track')
+            driving.stopDriving()
+            driving.turnStraight()
+            
+        else:
+            print("stopped")
+            driving.stopDriving()
+            driving.turnStraight()
+
+    # returns the current steering position
     def curSteeringPos(self):
         pos = driving.getSteeringPos()
         return pos
-    """
-        if driving.isTurnedStraight():
-            return "mid"
-        elif driving.isTurnedLeft():
-            return "lft"
-        elif driving.isTurnedRight():
-            return "rht"
-        else:
-            logging.debug("Incorrect Steering Position")
-            return "err"
-    """
+    
 def flight_recorder():
     recorder = RecordDriving(0)
     recorder.start_recording()
     recorder.stop_recording()
     del recorder
 
+# run recording in a separate thread
 def run_recording_thread():
     t1 = Thread(target=flight_recorder)
     t1.run()
-commands = []
-command_number = 0
 
-
-run_recording_thread()
-
-
-
-        
-def addCommand(direction = " ", time = 0):
-    if direction.lower() in actions:
-        commands.append((direction, time))
-    else:
-        logging.debug("Error, you attempted to record an Illegal action")
-
-def getNthCommand():
-    command = commands[command_number]
-    command_number += 1
-    return command
-
-def returnCommandList():
-    return commands
-
-def playbackActions():
-    pass
-
+if __name__=='__main__':
+    run_recording_thread()

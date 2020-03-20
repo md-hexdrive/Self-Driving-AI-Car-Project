@@ -7,9 +7,9 @@ Some of this code was adapted from the DeepPiCar tutorial, specifically, end_to_
 """
 import driving
 import distance_monitoring
-
+import interpret_frame
+import record_driving
 from tensorflow.keras.models import load_model
-#import tensorflow.keras as keras
 import numpy as np
 import cv2
 
@@ -18,6 +18,9 @@ import os.path
 import logging
 import sys
 import time
+
+
+halt = False
 
 logging.basicConfig(level=logging.ERROR)
 model_dir = '/home/pi/Desktop/models/'
@@ -55,16 +58,26 @@ def img_preprocess(image):
     image = image / 255
     return image
 
-# ;-) -> "Run Flash, Run" ~= "Drive AI, Drive"; I'm a bit of a fan of "The Flash"
-def drive_ai_drive(model_path=model_path):
-    halt = False
+class AIDrivingRecorder(record_driving.RecordDriving):
+    def __init__(self, video_source = 0):
+        super(AIDrivingRecorder,self).__init__(source=video_source, width=320, height=240,
+                                               fps=10,
+                                               is_training = False, record_interpretation = True)
     
-    cap = cv2.VideoCapture(0)
-    cap.set(3, 320)
-    cap.set(4, 240)
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter('/home/pi/Desktop/recordings/test_drive_%i.avi' % int(time.time()),
-                          fourcc, 10.0, (320, 240))
+    def keyboard_interaction(self, key):
+        global halt
+        if key == ord('q'):
+            driving.fullBrake()
+            self.stop_recording()
+            sys.exit()
+        elif key == ord(' '): # allow space key to stop the car
+            halt = not halt
+
+
+# ;-) -> "Run Flash, Run" ~= "Drive AI, Drive"; I'm a bit of a fan of "The Flash"
+def drive_ai_drive(model_path=model_path, video_source=0):
+    
+    recorder = AIDrivingRecorder(video_source)
     
     if not os.path.exists(model_path):
         logging.error(model_path, "does not exist, exiting")
@@ -73,15 +86,8 @@ def drive_ai_drive(model_path=model_path):
     print(model.summary())
     
     while True:
-        ret, frame = cap.read()
-        cv2.imshow('frame', frame)
-        out.write(frame)
+        frame = recorder.capture_frame()
         
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            break
-        elif key == ord(' '): # allow space key to stop the car
-            halt = not halt
         if not halt:
             frame = img_preprocess(frame)
             x = np.asarray([frame])
@@ -111,10 +117,6 @@ def drive_ai_drive(model_path=model_path):
             driving.straightenWheels()
 
             print("stopped")
-    driving.fullBrake()
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
-    sys.exit()
-   
-drive_ai_drive()
+    
+if __name__=='__main__':
+    drive_ai_drive()
