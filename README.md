@@ -20,10 +20,10 @@ The car uses a neural network that is trained by watching how a human driver nav
 ## Source Code
 The key code is contained in the [Self-Driving Car Project](/Self-Driving Car Project/) directory. The other directories hold that I praticed with over the course of creating the project. Some are based on tutorials I followed. The misc subfolder in the Self-Driving Car Project directory holds code that I experimented with in direct relation to the car, but is not needed and has fallen by the wayside. For instance, I originally tried to use the Pygame Python module to provide user with real-time interactivity with the car using the keyboard, but it proved somewhat difficult. I eventually used OpenCV's waitkey() method to capture keyboard input both when recording driving data to train the car and when the car was driving itself.
 
-###Controlling GPIO hardware
+### Controlling GPIO hardware
 The basic driving code is held in the driving.py file. This file handles the interaction between the Pi and the car's motors, which are controlled with the TB6612FNG motor controller from SparkFun. The ultrasonic distance sensor control code is in distance_sensor.py. Both interact with their respective devices through the Pi's GPIO (general purpose input-output) pins with the use of the Python GPIOZero library. 
 
-###Autonomous Driving
+### Autonomous Driving
 The code for autonomous driving is held in drive_with_ai.py, but the code also relies on driving.py, record_driving.py, distance_monitoring.py, and interpret_frame.py.
 
 The car uses a combination of a Convolutional Neural network and real-time sensor feedback to drive. The Neural network is trained with input images and driving commands that were recorded when a real driver drove the car along an artificial track (the actual training occurs on Google Colab, not on the car itself). The car's neural network takes as input live camera feed and outputs appropriate driving commands.
@@ -33,7 +33,7 @@ The neural network outputs an array of propbiblities which indicate to it how li
 
 In terms of real cars, this car has automatic emergency braking and lane-keep-assist: It will automatically brake to avoid collisions or if it drives off the road, and it will stay in its lane automatically. 
 
-###Collecting Training Data
+### Collecting Training Data
 The user connects to the Raspberry Pi over VNC. That way they can view semi real-time video from the car's camera, and they can manually control it with a keyboard. They can also control the Pi with a keyboard connected directly to the Pi either with a cord or wireless dongle (in theory). I didn't have a wireless keyboard, and connecting over vnc doesn't allow reliable real-time keyboard control (the Pi receives multiple key up/down events every second, or at least when you are pressing and holding a key the Pi doesn't interpret the key as being constantly held). Therefore, for collecting training data, I plugged a wired usb keyboard directly into the Pi and walked behind it while I drove it.
 record_driving.py is the program that allows the user to drive the car while collecting training data.
 
