@@ -38,8 +38,18 @@ model_dir = '/home/pi/Desktop/models/'
 #model_name = 'Lets_Do_This_Blue_Circle_Track_Properly_With_NVDIA_Model'
 
 # the final model, drives successfully around the blue loop
-model_name = 'Final-Driving-Model'
-model_path = os.path.join(model_dir, model_name, model_name + '_final.h5')
+#model_name = 'Final-Driving-Model'
+
+# test final model on full track without being trained to automatically stop
+#model_name = 'Final-Driving-Model-Without-Stop-Conditions'
+
+# test final model on full track without being trained to automatically stop
+#model_name = 'Good-Model'
+
+#model_name = 'Lets Just Do This'
+#model_name = 'Drive-Around-Table-Model'
+model_name = 'Table-Day-Model'
+model_path = os.path.join(model_dir, model_name, model_name + '_check.h5')
 
 driving_commands = ['drive forward, turn left', 'drive forward, turn straight',
                     'drive forward, turn right', 'stop driving']
@@ -61,7 +71,7 @@ def img_preprocess(image):
 class AIDrivingRecorder(record_driving.RecordDriving):
     def __init__(self, video_source = 0):
         super(AIDrivingRecorder,self).__init__(source=video_source, width=320, height=240,
-                                               fps=10,
+                                               fps=20,
                                                is_training = False, record_interpretation = True)
     
     def keyboard_interaction(self, key):
@@ -75,7 +85,7 @@ class AIDrivingRecorder(record_driving.RecordDriving):
 
 
 # ;-) -> "Run Flash, Run" ~= "Drive AI, Drive"; I'm a bit of a fan of "The Flash"
-def drive_ai_drive(model_path=model_path, video_source=0):
+def drive_ai_drive(model_path=model_path, video_source=0, monitor_distance=True):
     
     recorder = AIDrivingRecorder(video_source)
     
@@ -100,8 +110,8 @@ def drive_ai_drive(model_path=model_path, video_source=0):
             
             else:
                 #driving.driveForward()
-
-                if distance_monitoring.ultrasonic_sensor.distance < .45:
+                
+                if monitor_distance and distance_monitoring.ultrasonic_sensor.distance < .45:
                     driving.fullBrake()
                     driving.straightenWheels()
                     print("object too close, stopping")

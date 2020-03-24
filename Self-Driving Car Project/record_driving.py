@@ -23,9 +23,9 @@ def now():
 
 class RecordDriving():
     # use formatted datetime to identify different recordings (from DeepPiCar code)
-    def __init__(self, source = 0, width = 640, height = 480, fps=10,
+    def __init__(self, source = 0, width = 640, height = 480, fps=20,
                  save_dir = '/home/pi/Desktop/recordings/',
-                 recording_id = now(), is_training=True, view_interpretation = True,
+                 recording_id = now(), is_training=True, view_interpretation = False,
                  record_interpretation = False):
         self.source = source
         print(self.source)
@@ -135,7 +135,7 @@ class RecordDriving():
         elif ord('r') == key:
             print('restarting')
             self.stop_recording()
-            RecordDriving(0, recording_id = self.now()).start_recording()
+            RecordDriving(0, recording_id = now()).start_recording()
         
         elif ord(' ') == key:
             print('end of track')

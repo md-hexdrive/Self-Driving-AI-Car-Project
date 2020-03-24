@@ -13,8 +13,8 @@ import os.path
 import fnmatch
 
 
-def resize_all(in_path='/home/pi/Desktop/recordings/Pictures2',
-               out_path ='/home/pi/Desktop/recordings/Resized_Photos', width=85, height=64):
+def resize_all(in_path='/home/pi/Desktop/recordings/training/2002_27_085658',
+               out_path ='/home/pi/Desktop/Resized_Photos', width=85, height=64):
     if not os.path.exists(out_path):
         os.makedirs(out_path)
         
@@ -33,6 +33,8 @@ def resize_all(in_path='/home/pi/Desktop/recordings/Pictures2',
         for photo_name in photo_names:
             img = cv2.imread(os.path.join(in_path, photo_name))
             img = cv2.resize(img, (width, height))
+            img = img[:int(height-height//10),:,:]
+            img = img[:int(height),:,:]
             cv2.imwrite(os.path.join(out_path, photo_name), img)
             print('Resizing image %s' % photo_name)
 
