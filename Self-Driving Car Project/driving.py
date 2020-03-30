@@ -28,9 +28,13 @@ def fullBrake(centerWheels = False):
     
     if(centerWheels):
         straightenWheels()
+    
+    sleep(0.1)
+    
+    stopDriving()
 
 
-def stopDriving(centerWheels = True):
+def stopDriving(centerWheels = False):
     forward.value = False
     backward.value = False
     
