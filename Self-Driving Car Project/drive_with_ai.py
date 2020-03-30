@@ -20,7 +20,7 @@ import sys
 import time
 
 
-halt = False
+halt = False # halt allows the user to use the space key to toggle driving on/off
 
 logging.basicConfig(level=logging.ERROR)
 model_dir = '/home/pi/Desktop/models/'
@@ -48,7 +48,9 @@ model_dir = '/home/pi/Desktop/models/'
 
 #model_name = 'Lets Just Do This'
 #model_name = 'Drive-Around-Table-Model'
-model_name = 'Table-Day-Model'
+#model_name = 'Table-Day-Model'
+
+model_name = 'Table-Model-v4'
 model_path = os.path.join(model_dir, model_name, model_name + '_check.h5')
 
 driving_commands = ['drive forward, turn left', 'drive forward, turn straight',
@@ -68,12 +70,15 @@ def img_preprocess(image):
     image = image / 255
     return image
 
+"""
+record the AI's driving activity for review
+"""
 class AIDrivingRecorder(record_driving.RecordDriving):
     def __init__(self, video_source = 0):
         super(AIDrivingRecorder,self).__init__(source=video_source, width=320, height=240,
                                                fps=20,
                                                is_training = False, record_interpretation = True)
-    
+    # override parent class keyboard interactivity
     def keyboard_interaction(self, key):
         global halt
         if key == ord('q'):
