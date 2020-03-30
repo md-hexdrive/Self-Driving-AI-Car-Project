@@ -15,17 +15,16 @@ This program allows recording of driving data (the steering position of the car 
 Recorded data will be used to train the neural network later on.
 """
 
-actions = ["lft", "rht", "mid", "fwd", "bck", "stp",]
 
 # returns the current time, used to uniquely identify recordings
 def now():
-    return datetime.datetime.now().strftime("%y%m_%d_%H%M%S")
+    return datetime.datetime.now().strftime("%y%m_%d_%H%M%S") #found this in the DeepPiCar training code
 
 class RecordDriving():
-    # use formatted datetime to identify different recordings (from DeepPiCar code)
+    # setup recording:
     def __init__(self, source = 0, width = 640, height = 480, fps=20,
                  save_dir = '/home/pi/Desktop/recordings/',
-                 recording_id = now(), is_training=True, view_interpretation = False,
+                 recording_id = now(), batch_id = now(), is_training=True, view_interpretation = False,
                  record_interpretation = False):
         self.source = source
         print(self.source)
@@ -41,9 +40,9 @@ class RecordDriving():
         self.record_interpretation = record_interpretation
         
         self.recording_id = recording_id
-        
+        self.batch_id = batch_id
         if is_training:
-            recording_type = "training"
+            recording_type = os.path.join("training", 'batch_id_%s' % self.batch_id)
         else:
             recording_type = "testing"
         self.recording_directory = os.path.join(save_dir, recording_type, str(self.recording_id), '')
@@ -109,40 +108,40 @@ class RecordDriving():
     
     # handle user-keyboard interaction in the running window
     def keyboard_interaction(self, key):
-        if key == ord('q'):
+        if key == ord('q'): # 'q' key quits the program
             self.stop_recording()
         
-        elif ord('s') == key:
+        elif ord('s') == key: # 's' reverses the car
             print('reverse')
             driving.turnStraight()
             driving.driveBackward()
             
-        elif ord('w') == key:
+        elif ord('w') == key: # 'w' drives the car straight ahead
             print('str')
             driving.turnStraight()
             driving.driveForward()
             
-        elif ord('a') == key: #in self.recent_keys:
+        elif ord('a') == key: # 'a' drives the car forwards and to the left
             print('lft')
             driving.turnLeft()
             driving.driveForward()
             
-        elif ord('d') == key: #in self.recent_keys:
+        elif ord('d') == key: # 'd' drives the car forwards and to the right
             print('rht')
             driving.turnRight()
             driving.driveForward()
         
-        elif ord('r') == key:
+        elif ord('r') == key: # 'r' restarts the recording process with a new batch of training data
             print('restarting')
             self.stop_recording()
-            RecordDriving(0, recording_id = now()).start_recording()
+            RecordDriving(0, recording_id = now(), batch_id=self.batch_id).start_recording()
         
-        elif ord(' ') == key:
+        elif ord(' ') == key: # ' ' (the space key) stops the car and indicates that this location is a stop position
             print('end of track')
             driving.stopDriving()
             driving.turnStraight()
             
-        else:
+        else:    # otherwise (if any other key is pressed or if no key is pressed), stop the car
             print("stopped")
             driving.stopDriving()
             driving.turnStraight()
@@ -155,10 +154,10 @@ class RecordDriving():
 def flight_recorder():
     recorder = RecordDriving(0)
     recorder.start_recording()
-    recorder.stop_recording()
-    del recorder
+    #recorder.stop_recording()
+    #del recorder
 
-# run recording in a separate thread
+# run recording process in a separate thread
 def run_recording_thread():
     t1 = Thread(target=flight_recorder)
     t1.run()
