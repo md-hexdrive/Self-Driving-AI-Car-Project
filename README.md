@@ -5,7 +5,7 @@
 
 My brother helped me with constructing this project and gave me very good advice on how to do it - it really does help to have an extra pair of hands. My Dad also cut a couple of wooden supports for me to help keep the hardware level. I would like to express my gratitude for their help.
 
-The car was orginally a basic RC Lamborghini like what someone can buy off Amazon or Walmart. The car is powered by the Raspberry Pi 3B, which takes live camera and ultrasonic distance sensor feeds and processes them to determine appropriate actions to take while driving along an artificial track.
+The car was orginally a basic RC Lamborghini like what someone can buy from Amazon or Walmart. The car is powered by the Raspberry Pi 3B, which takes live camera and ultrasonic distance sensor feeds and processes them to determine appropriate actions to take while driving along an artificial track.
 
 The programming is all in Python and [Google Colab](https://colab.research.google.com/notebooks/intro.ipynb) notebooks.
 
