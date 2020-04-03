@@ -1,7 +1,9 @@
-# Self-Driving AI RC Car Project
+# AI Self-Driving Car Project
  This is the Code and Documentation for the Self Driving RC Car for my final Project in the COMP 444 Embedded/Robotic Programming course at Athabasca University. A video of the project is located [here](https://youtu.be/rAWz5kUqRnQ).
 
 **Note:** This project is a work in progress and the programming/documentation isn't complete.
+
+![The Car](/assets/DSC02199.JPG)
 
 ## Credits:
 For this project, I collaborated with my brother to build the car, and we discussed how to solve several problems together. My dad also made some wooden supports for the car to help secure and level hardware. I am very grateful for their advice/help.
