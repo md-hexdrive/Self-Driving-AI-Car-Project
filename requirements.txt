@@ -1,0 +1,6 @@
+# requirements.txt
+tensorflow
+keras
+opencv
+numpy
+scipy
