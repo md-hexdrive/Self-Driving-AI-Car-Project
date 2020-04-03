@@ -1,18 +1,20 @@
 # Self-Driving AI RC Car Project
- This is the Code and Documentation for the Self Driving RC Car for my final Project in the COMP 444 Embedded/Robotic Programming course at Athabasca University.
+ This is the Code and Documentation for the Self Driving RC Car for my final Project in the COMP 444 Embedded/Robotic Programming course at Athabasca University. The YouTube video is [here](https://youtu.be/rAWz5kUqRnQ).
 
 **Note:** This project is a work in progress and the programming/documentation isn't complete.
 
-My brother helped me with constructing this project and gave me very good advice on how to do it - it really does help to have an extra pair of hands. My Dad also cut a couple of wooden supports for me to help keep the hardware level. I would like to express my gratitude for their help.
+## Credits:
+For this project, I collaborated with my brother to build the car, and we discussed how to solve several problems together. My dad also made some wooden supports for the car to help secure and level hardware. I am very grateful for their advice/help.
+
+I was aided in coding the car by consulting a number of online sources, particularly the Raspberry Pi, TensorFlow, and OpenCV documentation/tutorials; the [DeepPiCar tutorials](https://towardsdatascience.com/deeppicar-part-1-102e03c83f2c) and [code](https://github.com/dctian/DeepPiCar/blob/master/models/lane_navigation/code/); and [this tutorial](https://www.bluetin.io/dc-motors/motor-driver-raspberry-pi-tb6612fng/), which showed me how to interface the Raspberry Pi with the TB6612FNG motor controller. The code for training the AI is largely based on [end_to_end_lane_navigation.ipynb](https://github.com/dctian/DeepPiCar/blob/master/models/lane_navigation/code/end_to_end_lane_navigation.ipynb) from the DeepPiCar tutorials and some of the DeepPiCar programming helped me out in other places in my project, but I wrote most of the code myself. The [SparkFun TB6612FNG Hookup Guide](https://learn.sparkfun.com/tutorials/tb6612fng-hookup-guide/all) also helped with controlling the project.
+
 
 The car was orginally a basic RC Lamborghini like what someone can buy from Amazon or Walmart. The car is powered by the Raspberry Pi 3B, which takes live camera and ultrasonic distance sensor feeds and processes them to determine appropriate actions to take while driving along an artificial track.
 
-The programming is all in Python and [Google Colab](https://colab.research.google.com/notebooks/intro.ipynb) notebooks.
+The programming is all in Python and some is in [Google Colab](https://colab.research.google.com/notebooks/intro.ipynb) notebooks.
 
-The programming for training the AI is based on the [DeepPiCar tutorials](https://towardsdatascience.com/deeppicar-part-1-102e03c83f2c), specifically, [this notebook](https://github.com/dctian/DeepPiCar/blob/master/models/lane_navigation/code/end_to_end_lane_navigation.ipynb).
-The programming that helped me figure out how to control the car from the Raspberry Pi came from [this tutorial](https://www.bluetin.io/dc-motors/motor-driver-raspberry-pi-tb6612fng/) and the [SparkFun TB6612FNG Hookup Guide](https://learn.sparkfun.com/tutorials/tb6612fng-hookup-guide/all).
 
-This car can drive completely autonomously along roadways made out of tape or paper.
+This car can drive completely autonomously along any arbitrary track it has correct training data from.
 
 The car uses a neural network that is trained by watching how a human driver navigates the track and uses the data provided by them to learn how to drive on its own.
 
