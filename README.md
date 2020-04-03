@@ -38,7 +38,7 @@ The neural network outputs an array of propbiblities which indicate to it how li
 
 In terms of real cars, this car has automatic emergency braking and lane-keep-assist: It will automatically brake to avoid collisions or if it drives off the road, and it will stay in its lane automatically. 
 
-![Autopilot Program Screenshot](/assets/AutoDrive screenshot.jpg)
+![Autopilot Program Screenshot](/assets/AutoDrive%20screenshot.jpg)
 
 ### Collecting Training Data
 The user connects to the Raspberry Pi over VNC. That way they can view semi real-time video from the car's camera, and they can manually control it with a keyboard. They can also control the Pi with a keyboard connected directly to the Pi either with a cord or wireless dongle (in theory). I didn't have a wireless keyboard, and connecting over vnc doesn't allow reliable real-time keyboard control (the Pi receives multiple key up/down events every second, or at least when you are pressing and holding a key the Pi doesn't interpret the key as being constantly held). Therefore, for collecting training data, I plugged a wired usb keyboard directly into the Pi and walked behind it while I drove it.
