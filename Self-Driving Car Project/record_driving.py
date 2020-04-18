@@ -58,11 +58,13 @@ class RecordDriving():
 
     # starts the recording session
     def start_recording(self):
+        os.system("xset r rate 30 30")
         self.record()
     
     # the recording loop
     def record(self):
         while (self.cap.isOpened()):
+            os.system("xset r rate 30 30")
             self.capture_frame()
             
     # cleanup after running
@@ -70,25 +72,27 @@ class RecordDriving():
         self.out.release()
         self.cap.release()
         cv2.destroyAllWindows()
+        os.system("xset r rate 500 30")
     
     # record and display the current video frame, include driving status info in the frame's name
     def capture_frame(self):
 
         self.frameN += 1
         ret, frame = self.cap.read()
-
-        overlay = interpret_frame.whats_going_on(frame)
+        
+        #image = frame.copy()
+        #overlay = interpret_frame.whats_going_on(image)
         
         
-        if self.view_interpretation:
-            cv2.imshow('overlay', overlay)
-        else:
-            cv2.imshow('frame', frame)
+        #if self.view_interpretation:
+        #cv2.imshow('overlay', overlay)
+        #else:
+        cv2.imshow('frame', frame)
         
-        if self.record_interpretation:
-            self.out.write(overlay)
-        else:
-            self.out.write(frame)
+#         if self.record_interpretation:
+#             self.out.write(overlay)
+#         else:
+#             self.out.write(frame)
 
         frame = cv2.resize(frame, (85,64))
         
@@ -138,12 +142,12 @@ class RecordDriving():
         
         elif ord(' ') == key: # ' ' (the space key) stops the car and indicates that this location is a stop position
             print('end of track')
-            driving.stopDriving()
+            driving.fullBrake()
             driving.turnStraight()
             
         else:    # otherwise (if any other key is pressed or if no key is pressed), stop the car
             print("stopped")
-            driving.stopDriving()
+            driving.fullBrake()
             driving.turnStraight()
 
     # returns the current steering position
