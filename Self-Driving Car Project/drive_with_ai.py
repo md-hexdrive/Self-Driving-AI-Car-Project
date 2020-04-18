@@ -50,7 +50,8 @@ model_dir = '/home/pi/Desktop/models/'
 #model_name = 'Drive-Around-Table-Model'
 #model_name = 'Table-Day-Model'
 
-model_name = 'Table-Model-v4'
+#model_name = 'Table-Model-v4'
+model_name = 'Blue-Model-v8'
 model_path = os.path.join(model_dir, model_name, model_name + '_check.h5')
 
 driving_commands = ['drive forward, turn left', 'drive forward, turn straight',
