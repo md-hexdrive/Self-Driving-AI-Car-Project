@@ -59,10 +59,16 @@ def driveBackward():
     drive.value = .8
 
 def straightenWheels():
+    left.value = True
+    right.value = True
+    
+    turn.value = 0
+    
+    sleep(0.05)
+    
     left.value = False
     right.value = False
     
-    turn.value = 0
     return
 
 def turnStraight():
