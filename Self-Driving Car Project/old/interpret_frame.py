@@ -2,7 +2,7 @@
 This program takes an input frame and the currently active driving command and gives the user
 visual feedback on the live camera stream of what the car is doing at a given moment.
 """
-import driving
+import driving as driving
 
 import cv2
 import logging

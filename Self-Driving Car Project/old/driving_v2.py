@@ -3,14 +3,14 @@ from gpiozero import DigitalOutputDevice
 from gpiozero import PWMOutputDevice
 from time import sleep
 
-# TODO: Give these pins the correct number
-PWMA_FB = 21
-FORWARD_PIN = 20
-REVERSE_PIN = 16
+# TODO : Give these pins the correct number
+PWMA_FB = 22
+FORWARD_PIN = 17
+REVERSE_PIN = 27
 
-PWMB_LR = 14
-LEFT_PIN = 15
-RIGHT_PIN = 18
+PWMB_LR = 13
+LEFT_PIN = 6
+RIGHT_PIN = 5
 
 drive = PWMOutputDevice(PWMA_FB, True, 0, 1000)
 turn = PWMOutputDevice(PWMB_LR, True, 0, 1000)
@@ -44,47 +44,52 @@ def stopDriving(centerWheels = False):
         straightenWheels()
 
 def driveForward(straightWheels = False):
-    forward.value = True
-    backward.value = False
-    
-    drive.value = .5
+    if not isDrivingForwards():
+        forward.value = True
+        backward.value = False
+        
+        drive.value = .5
     
     if straightWheels:
         straightenWheels()
 
 def driveBackward():
-    forward.value = False
-    backward.value = True
-    
-    drive.value = .8
+    if not isBackingUp():
+        forward.value = False
+        backward.value = True
+        
+        drive.value = .8
 
 def straightenWheels():
-    left.value = True
-    right.value = True
-    
-    turn.value = 0
-    
-    sleep(0.05)
-    
-    left.value = False
-    right.value = False
-    
-    return
+    if not isTurnedStraight():
+        left.value = True
+        right.value = True
+        
+        turn.value = 0
+        
+        sleep(0.05)
+        
+        left.value = False
+        right.value = False
+        
+        return
 
 def turnStraight():
     straightenWheels()
     
 def turnLeft():
-    left.value = True
-    right.value = False
-    
-    turn.value = 1
+    if not isTurnedLeft():
+        left.value = True
+        right.value = False
+        
+        turn.value = 1
 
 def turnRight():
-    left.value = False
-    right.value = True
-    
-    turn.value = 1
+    if not isTurnedRight():
+        left.value = False
+        right.value = True
+        
+        turn.value = 1
 
 def driveForTime(seconds = 10):
     driveForward(straightWheels = True)
@@ -144,5 +149,5 @@ def getDrivingSpeed():
         speed *= -1
     return speed + 1
 if __name__ == '__main__':
-    setSteeringPos(-.8)
+    setSteeringPos(1)
     print(getSteeringPos())

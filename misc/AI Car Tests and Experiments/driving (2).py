@@ -4,13 +4,13 @@ from gpiozero import PWMOutputDevice
 from time import sleep
 
 # TODO: Give these pins the correct number
-PWMA_FB = 21
-FORWARD_PIN = 20
-REVERSE_PIN = 16
+PWMA_FB = 22
+FORWARD_PIN = 17
+REVERSE_PIN = 27
 
-PWMB_LR = 14
-LEFT_PIN = 15
-RIGHT_PIN = 18
+PWMB_LR = 13
+LEFT_PIN = 6
+RIGHT_PIN = 5
 
 drive = PWMOutputDevice(PWMA_FB, True, 0, 1000)
 turn = PWMOutputDevice(PWMB_LR, True, 0, 1000)
